@@ -2,7 +2,7 @@
 A lightweight python library for implementing GraphQL on Relational DB Tables in few steps using python dicts. The library is built over strawberry-graphql for creating graphQL schema from dataclasses
 
 <H1> Usage Example</H1>
-Using GoRDB can enable implementing graph schema and graph queries like one given below on traditional Relational DBs.
+GoRDB makes it easy to implement graph schema and graph queries like one given below on traditional Relational DBs.
 
 ```
 Example Graph query on Relational DB having User table and Subscriptions table implemented using GoRDB
