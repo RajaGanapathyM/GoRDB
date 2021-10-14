@@ -1,0 +1,4 @@
+pyvis==0.1.9
+networkx==2.5
+dataclasses==0.8
+strawberry==3.0
