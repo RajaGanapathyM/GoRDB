@@ -18,6 +18,10 @@ Example Graph query on Relational DB having User table and Subscriptions table i
 
 <img src="https://user-images.githubusercontent.com/15811701/137274030-0b3b2bc6-f928-4d61-866f-c5dfd7488960.PNG" width="100%" height="300px"/>
 
+<H1> Installation</H1>
+```python
+pip install GoRDB
+```
 <H1> Implementation Steps</H1>
 
 <h2>Step-1:</h2>
