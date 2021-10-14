@@ -28,7 +28,7 @@ import GoRDB
 ```
 
 <h2>Step-2:</h2>
-Initialize connection configs for your DB. Here config is shown for Oracle DB
+Initialize connection configs for your DB. Here config is shown for Oracle DB, You can set this for any RDB of your choice
 
 ```python
 import cx_Oracle as orac
