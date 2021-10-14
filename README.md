@@ -24,7 +24,7 @@ Example Graph query on Relational DB having User table and Subscriptions table i
 Import GoRDB library
 
 ```python
-import GoRDB
+from GoRDB import GoRDB
 ```
 
 <h2>Step-2:</h2>
