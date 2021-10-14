@@ -169,9 +169,6 @@ def function_constructor(self_key,parent_class,self_prime_key,foerign_prime_key,
         return rec if ext_bool else getattr(rec,self_key) 
     return get_filed
 
-# table_name="BIUSR.TBL_TRN_SEIZURE_DETAILS"
-
-
 @dataclass
 class table_column:
     column_name:str
