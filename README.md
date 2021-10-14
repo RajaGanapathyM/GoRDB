@@ -28,7 +28,7 @@ import GoRDB
 ```
 
 <h2>Step-2:</h2>
-Initialize connection configs of your DB. Here config are shown for Oracle DB
+Initialize connection configs for your DB. Here config is shown for Oracle DB
 
 ```python
 import cx_Oracle as orac
@@ -60,11 +60,11 @@ def query_executor(connection_id,query_str):
 <h2>Step-4:</h2> 
 
 Add node definition for each node in your graph layer as dict in the format given below. 
-<br>Nodes define the table in your Relational DB
+<br>Nodes define the table in your Relational DB. Node alias is the node name which will be used in your Graph queries
 <br>Features define the columns in your RDB table
 <br>Edges define the relation between on node to another and corresponding mapping keys
 <br>Table connection id define the connection identifier which will be passed to query executor function
-<br>query executor define the function which will be called to execute query.
+<br>Query executor define the function which will be called to execute query.
 
 <br>Here for the example shown above we have 2 nodes.
 
