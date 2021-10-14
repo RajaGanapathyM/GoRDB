@@ -60,13 +60,13 @@ def query_executor(connection_id,query_str):
 <h2>Step-4:</h2> 
 
 Add node definition for each node in your graph layer as dict in the format given below. 
-Nodes define the table in your Relational DB
-Features define the columns in your RDB table
-Edges define the relation between on node to another and corresponding mapping keys
-Table connection id define the connection identifier which will be passed to query executor function
-query executor define the function which will be called to execute query.
+<br>Nodes define the table in your Relational DB
+<br>Features define the columns in your RDB table
+<br>Edges define the relation between on node to another and corresponding mapping keys
+<br>Table connection id define the connection identifier which will be passed to query executor function
+<br>query executor define the function which will be called to execute query.
 
-Here for the example shown above we have 2 nodes.
+<br>Here for the example shown above we have 2 nodes.
 
 ```python
 USER_node_dict={
