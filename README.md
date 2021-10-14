@@ -109,6 +109,8 @@ Build your GraphQL Schema by passing the list of node definitions dict
 
 ```python
 schema,node_builds_compiled=GoRDB.build_scheme_from_node_dict([USER_node_dict,SUBSCRIPTIONS_node_dict])
+
+
 ```
 
 <h2>Step-6:</h2>
@@ -119,6 +121,7 @@ Note: the filterstr corresponds to the "WHERE" part of your nomrmal SQL query. i
 
 ```python
 ding=schema.execute('{User(filterStr:" USERID > 5 and  @#ROWNUM#@ <5 "){USERID,USERNAME,Subscriptions{PRODUCTID}}}')
+print(await ding)
 ```
 
 
