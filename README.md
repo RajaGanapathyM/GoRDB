@@ -2,7 +2,7 @@
 A lightweight python library for implementing GraphQL on Relational DB Tables in few steps using python dicts. The library is built over strawberry-graphql for creating graphQL schema from dataclasses
 
 ```
-Example GraphQL on Relational DB having User table and Subscripts table implemented using GoRDB
+Example Graph query on Relational DB having User table and Subscriptions table implemented using GoRDB
 
 {
     User(filterStr:" @#ROWNUM#@ <5 ")
