@@ -82,7 +82,7 @@ USER_node_dict={
     ],
     
     'edges':[
-        {'edge_alias':'Subscriptions','node_feature_alias':'USERID','foreign_node_alias':'subscriptions','foreignNode_feature_alias':'SUBSCRIBERID','many_mapping':True}
+        {'edge_alias':'Subscriptions','node_feature_alias':'USERID','foreign_node_alias':'Subscriptions','foreignNode_feature_alias':'SUBSCRIBERID','many_mapping':True}
         
     ]
         
@@ -133,4 +133,5 @@ GoRDB have helper function called show_graph which can be used to see the networ
 GoRDB.show_graph([USER_node_dict,SUBSCRIPTIONS_node_dict])
 ```
 
+![show_graph_example](https://user-images.githubusercontent.com/15811701/137302776-1654a4eb-eb5b-4df9-b438-73cf1473c528.PNG)
 
