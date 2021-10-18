@@ -17,8 +17,8 @@ class Node:
         self.features={}
         self.edges={}
         self.query_executor=query_executor
-    def add_feature(self,feature_alias,feature_name_in_table):
-        self.features[feature_alias]=table_column(column_name=feature_name_in_table,column_alias=feature_alias)
+    def add_feature(self,feature_alias,feature_name_in_table,feature_type):
+        self.features[feature_alias]=table_column(column_name=feature_name_in_table,column_alias=feature_alias,column_type=feature_type)
 
     def add_edge(self,edge_alias,foreign_node,local_feature_alias,foreign_feature_alias,many_mapping):
         if isinstance(foreign_node,Node):
@@ -173,7 +173,7 @@ def function_constructor(self_key,parent_class,self_prime_key,foerign_prime_key,
 class table_column:
     column_name:str
     column_alias:str
-    column_type:str=str
+    column_type:str=typing.Optional[str]
     column_parent:str="self"
     column_localfetchkey:str="self"
     column_foreignfetchkey:str="self"
@@ -219,15 +219,16 @@ def add_fields(graphql_type):
             k=col.column_alias
             t=col.column_type
             parent_class=col.column_parent
-            assert parent_class!='self'
+            assert parent_class!='self',"Foreign Node not found"
             localpkey=col.column_localfetchkey
             foerignpkey=col.column_foreignfetchkey
             # print("foerignpkey",foerignpkey)
-            assert foerignpkey in parent_class.table_columns_to_alias
+            assert foerignpkey in parent_class.table_columns_to_alias,"foreignNode_feature_alias is not found in foreign nod"
             pclass=parent_class if parent_class!='self' else graphql_type
             isList=col.column_isList
             if print_log:print(k,pclass,foerignpkey,t,ext)
-            setattr(graphql_type,k,strawberry.field(resolver= function_constructor(k,pclass,localpkey,foerignpkey,t,ext,isList)))
+            setattr(graphql_type,k,strawberry.field(resolver= function_constructor(	self_key=k,parent_class=pclass,self_prime_key=localpkey,foerign_prime_key=foerignpkey,return_type=t,ext_bool=ext,isList=isList)))
+    
     return graphql_type
 
 def build_graphl_type(graphql_type):
@@ -240,7 +241,12 @@ def build_node_from_dict(node_def_dict):
     node_def=Node(tbl_name=node_def_dict['tbl_name'],node_alias=node_def_dict['node_alias'],tbl_connection_id=node_def_dict['tbl_connection_id'],query_executor=node_def_dict['query_executor'])
 
     for each_f in node_def_dict['features']:
-        node_def.add_feature(feature_alias=each_f['feature_alias'],feature_name_in_table=each_f['feature_name_in_table'])
+    	if not 'feature_type' in each_f:
+    		each_f['feature_type']=typing.Optional[str]
+    	else:
+    		each_f['feature_type']=typing.Optional[each_f['feature_type']]
+
+    	node_def.add_feature(feature_alias=each_f['feature_alias'],feature_name_in_table=each_f['feature_name_in_table'],feature_type=each_f['feature_type'])
     
     for each_e in node_def_dict['edges']:
         node_def.add_edge(edge_alias=each_e['edge_alias'],foreign_node=global_nodes_dict[each_e['foreign_node_alias']],local_feature_alias=each_e['node_feature_alias'],foreign_feature_alias=each_e['foreignNode_feature_alias'],many_mapping=each_e['many_mapping'])
@@ -256,7 +262,11 @@ def pre_build_node_from_dict(node_def_dict):
     node_def=Node(tbl_name=node_def_dict['tbl_name'],node_alias=node_def_dict['node_alias'],tbl_connection_id=node_def_dict['tbl_connection_id'],query_executor=node_def_dict['query_executor'])
 
     for each_f in node_def_dict['features']:
-        node_def.add_feature(feature_alias=each_f['feature_alias'],feature_name_in_table=each_f['feature_name_in_table'])
+    	if not 'feature_type' in each_f:
+    		each_f['feature_type']=typing.Optional[str]
+    	else:
+    		each_f['feature_type']=typing.Optional[each_f['feature_type']]
+    	node_def.add_feature(feature_alias=each_f['feature_alias'],feature_name_in_table=each_f['feature_name_in_table'],feature_type=each_f['feature_type'])
     
 #     node_def=node_def.build_node_1()
     global_nodes_dict[node_def_dict['node_alias']]=node_def.build_node_1()
@@ -293,7 +303,7 @@ def show_graph(node_dicts):
         G.nodes[each_no['node_alias']]['title']=each_no['tbl_name']
         G.nodes[each_no['node_alias']]['tbl_connection_id']=each_no['tbl_connection_id']
         G.nodes[each_no['node_alias']]['tbl_name']=each_no['tbl_name']
-        G.nodes[each_no['node_alias']]['features']=each_no['features']
+        # G.nodes[each_no['node_alias']]['features']=each_no['features']
 
         for each_ed in each_no['edges']:
             G.add_edge(each_no['node_alias'],each_ed['foreign_node_alias'])
@@ -301,7 +311,7 @@ def show_graph(node_dicts):
             G[each_no['node_alias']][each_ed['foreign_node_alias']]['foreignNode_feature_alias']=each_ed['foreignNode_feature_alias']
             G[each_no['node_alias']][each_ed['foreign_node_alias']]['many_mapping']=each_ed['many_mapping']
             G[each_no['node_alias']][each_ed['foreign_node_alias']]['title']='{} to {}'.format(each_ed['node_feature_alias'],each_ed['foreignNode_feature_alias'])
-            
+    # print(G)
     nt = Network('100%', '100%', directed=True)
     nt.from_nx(G)
     nt.set_edge_smooth('dynamic')
