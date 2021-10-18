@@ -71,7 +71,7 @@ def query_executor(connection_id,query_str):
 
 Add node definition for each node in your graph layer as dict in the format given below. 
 <br>Nodes define the table in your Relational DB. Node alias is the node name which will be used in your Graph queries
-<br>Features define the columns in your RDB table
+<br>Features define the columns in your RDB table. Feature type defines the column type(Default type: string)
 <br>Edges define the relation between on node to another and corresponding mapping keys. set many_mapping = True if you the edge define one-to-many relationship
 <br>Table connection id define the connection identifier which will be passed to query executor function
 <br>Query executor define the function which will be called to execute query.
@@ -87,7 +87,7 @@ USER_node_dict={
     
     
     'features':[
-        {'feature_alias':'USERID','feature_name_in_table':'USERID_SNO'},
+        {'feature_alias':'USERID','feature_name_in_table':'USERID_SNO','feature_type':int},
         {'feature_alias':'USERNAME','feature_name_in_table':'USERNAME'},
     ],
     
