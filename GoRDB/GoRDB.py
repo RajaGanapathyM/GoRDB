@@ -106,7 +106,7 @@ class DBloader():
             if print_log:print('batch_load_fn',query_str)
             
 
-            if filter_ls!=[]:
+            if filter_ls!=[] or self.querying_cls==None :
                 query_result=self.cls.query_executor(self.table_connection_id,query_str)
 #             local_cursor.execute(query_str)
 #             query_result=local_cursor.fetchall()
