@@ -61,12 +61,13 @@ def create_graphql_schema(nodes_list):
     schema = strawberry.Schema(query=Query)
     return schema
 class DBloader():
-    def __init__(self,prime_key,field_names,alias_name,table_name,table_connection_id,cls,multiple=True,filter_str=None):
+    def __init__(self,prime_key,field_names,alias_name,table_name,table_connection_id,cls,querying_cls,multiple=True,filter_str=None):
         super(DBloader, self).__init__()
         self.prime_key=prime_key
         self.field_names=field_names
         self.table_name=table_name
         self.cls=cls
+        self.querying_cls=querying_cls
         self.alias_name=alias_name
         self.table_connection_id=table_connection_id
         self.multiple=multiple
@@ -82,7 +83,7 @@ class DBloader():
             self.query_filter_str=self.query_filter_str.replace(" @#","").replace("#@ ","")
     def get_batch_fn(self):
         async def batch_load_fn(keys):
-            if print_log:print('batch_load_fn',keys,self.prime_key,self,self.table_name,self.cls)
+            if print_log:print('batch_load_fn',self.querying_cls,keys,self.prime_key,self,self.table_name,self.cls)
             filter_str=str(tuple([ky for ky in keys if ky!=None]))
             if print_log:print('batch_load_fn',filter_str,self.prime_key,self)
             if filter_str[-2:]==",)":
@@ -101,9 +102,12 @@ class DBloader():
             query_str=f"select {self.prime_key},{fname} from {self.table_name} "
             if filter_ls!=[]:
                 query_str+=" where " + " and ".join(filter_ls)
-
+            query_result=[]
             if print_log:print('batch_load_fn',query_str)
-            query_result=self.cls.query_executor(self.table_connection_id,query_str)
+            
+
+            if filter_ls!=[]:
+                query_result=self.cls.query_executor(self.table_connection_id,query_str)
 #             local_cursor.execute(query_str)
 #             query_result=local_cursor.fetchall()
 
@@ -130,6 +134,8 @@ class DBloader():
                 print("OUTER")
                 print(response_dict)
             
+            if self.querying_cls!=None:
+                all_result=None
             response=[response_dict[k] if k !=None else all_result for k in keys]
             if print_log:print("\nRESPPPP\n",self.table_name,response)
             return response
@@ -137,25 +143,26 @@ class DBloader():
 def make_class(class_name,class_vars):
     return type(class_name, (object, ), {i:None for i in class_vars})
 @classmethod
-def get_data_loader(cls,pkey,isList,filter_str=None):
+def get_data_loader(cls,pkey,isList,calling_cls,filter_str=None):
     if print_log:print('get_data_loader',str(cls),str(pkey),"{",str(filter_str))
     if (pkey,filter_str) not in cls.data_loader:
         pkey_tabl=None
         for col in cls.table_dataclass.table_columns:
             if col.column_alias==pkey:
                 pkey_tabl=col.column_name
-                
-        cls.data_loader[(pkey,filter_str)]=DBloader(pkey_tabl,cls.table_internal_columns,
-                                   cls.table_internal_columns_to_alias,
-                                   cls.table_name,
-                                   cls.table_connection_id,cls,isList,filter_str)   
+
+        cls.data_loader[(pkey,filter_str)]=DBloader(prime_key=pkey_tabl,field_names=cls.table_internal_columns,
+                                   alias_name=cls.table_internal_columns_to_alias,
+                                   table_name=cls.table_name,
+                                   querying_cls=calling_cls,
+                                   table_connection_id=cls.table_connection_id,cls=cls,multiple=isList,filter_str=filter_str)   
     return cls.data_loader[(pkey,filter_str)].loader
 
 def function_constructor(self_key,parent_class,self_prime_key,foerign_prime_key,return_type,ext_bool,isList):
     if print_log:print('function_constructor',self_key,return_type)
     async def get_filed(self,info,filter_str:typing.Optional[str]=None)->typing.Optional[return_type]:
         if print_log:print("get_filed",(parent_class,self_prime_key,filter_str))
-        dl=parent_class.get_data_loader(foerign_prime_key,isList,filter_str)
+        dl=parent_class.get_data_loader(pkey=foerign_prime_key,isList=isList,calling_cls=self,filter_str=filter_str)
 #         dl=parent_class.get_data_loader(self_prime_key,filter_str)
         if print_log:print("\DLLLLLLLLLLL\n",dl,parent_class)
 #         print(getattr(self,self_prime_key))
